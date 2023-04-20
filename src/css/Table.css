@@ -1,0 +1,15 @@
+.Table {
+    margin: 20px 0 0 30px;
+}
+Table {
+    margin: 10px 0 10px 0;
+}
+.Table Button {
+    background-color: brown;
+    border-color: brown;
+}
+.Table Button :hover {
+    background-color: brown;
+    border-color: rgb(49, 22, 198);
+    opacity: 0.8;
+}

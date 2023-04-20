@@ -1,13 +1,10 @@
 import React  from 'react';
-import { Outlet } from "react-router-dom";
-import NavBar from '../components/Nav';
-
-const Layout = () => {
+const Dashboard = () => {
   return (
     <>
-      <NavBar />
+    <p>hello</p>
     </>
   )
 };
 
-export default Layout;
+export default Dashboard;
