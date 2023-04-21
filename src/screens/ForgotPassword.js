@@ -89,7 +89,7 @@ export default function Forgot() {
                                         <div className="mt-3">
                                             <p className="mb-0  text-center">
                                                 Don't have an account?{" "}
-                                                <a href="/" className="text-primary fw-bold">
+                                                <a href="/Login" className="text-primary fw-bold">
                                                     Login
                                                 </a>
                                             </p>

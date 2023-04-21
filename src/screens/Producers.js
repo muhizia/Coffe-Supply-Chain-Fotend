@@ -4,7 +4,7 @@ import ProducerComp from '../components/Producers';
 const Producers = () => {
   return (
     <>
-      <ProducerComp/>
+      <ProducerComp prod={true}/>
     </>
   )
 };

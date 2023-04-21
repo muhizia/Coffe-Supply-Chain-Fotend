@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Company from "./tables/Company";
 
 
-const Producers = () => {
+const Producers = ({ prod }) => {
     const [producers, setProducers] = useState([]);
 
     useEffect(() => {
@@ -31,11 +31,12 @@ const Producers = () => {
     return (
         <>
             <div>
-      <Company
-        companies={producers}
-        onUpdateProducer={onUpdateProducer}
-      />
-    </div>
+                <Company
+                    prod={prod}
+                    companies={producers}
+                    onUpdateProducer={onUpdateProducer}
+                />
+            </div>
         </>
     );
 };

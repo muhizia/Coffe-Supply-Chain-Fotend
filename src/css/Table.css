@@ -4,12 +4,24 @@
 Table {
     margin: 10px 0 10px 0;
 }
-.Table Button {
+.Table Button.delete {
     background-color: brown;
     border-color: brown;
 }
-.Table Button :hover {
-    background-color: brown;
-    border-color: rgb(49, 22, 198);
-    opacity: 0.8;
+
+Button.delete:hover {
+    color: brown;
+    background-color: rgb(250, 246, 246);
+    border-color: brown;
+}
+
+Button.edit {
+    background-color: rgb(7, 87, 15);
+    border-color: rgb(7, 87, 15);
+}
+
+Button.edit:hover, Button.edit:active, Button.edit:focus {
+    background-color: rgb(246, 249, 246);
+    color: rgb(7, 87, 15);
+    border-color: rgb(7, 87, 15);
 }

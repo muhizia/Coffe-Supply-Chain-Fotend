@@ -1,8 +1,13 @@
 import React  from 'react';
 const Dashboard = () => {
+  function setToken(userToken) {
+  }
+  
+  function getToken() {
+  }
   return (
     <>
-    <p>hello</p>
+    <p>Hello</p>
     </>
   )
 };
