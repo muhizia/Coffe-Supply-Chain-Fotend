@@ -7,6 +7,8 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Modal from 'react-bootstrap/Modal';
 import * as FaIcons from "react-icons/fa";
 import Alert from 'react-bootstrap/Alert';
+import useToken from './useToken';
+import jwt from 'jwt-decode' // import dependency
 
 const BASE_URL = 'http://localhost:4000';
 
@@ -20,7 +22,7 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
     const [message, setMessage] = useState("")
     const [edit, setEdit] = useState(false)
     const [del, setDel] = useState(false)
-
+    const { token } = useToken();
     const formRef = useRef(null);
     // Form fields
     // const [countryIsInvalid, setCountryIsInvalid] = useState(false)
@@ -32,6 +34,8 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
         handleEdit(id) {
             setEdit(true)
             getCompbyID(id)
+            const user = jwt(token);
+            console.log(user)
         },
         handleDelete(id) {
             console.log("Aristide", id)
@@ -79,12 +83,22 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
     }
     const getCompbyID = (id) => {
         const path = prod ? '/producer/' : '/supplier/';
-        fetch(BASE_URL + path + id)
+        // const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type ': 'application/json', 'accept': 'application/json' };
+        // console.log(headers)
+        fetch(BASE_URL + path + id, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${token}`, // notice the Bearer before your token
+            }
+        })
             .then((res) => res.json())
             .then((data) => {
                 if (data.success) {
                     // TODO: set form
-                    setForm(data.producer)
+                    prod ? setForm(data.producer): setForm(data.supplier)
+                }else{
+                    console.log(data)
                 }
             })
             .catch((err) => {
@@ -236,8 +250,6 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
                     Save Changes
                 </Button> */}
             </Modal.Body>
-
-
         </Modal>
     )
 });
