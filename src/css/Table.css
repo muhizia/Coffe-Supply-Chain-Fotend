@@ -25,3 +25,14 @@ Button.edit:hover, Button.edit:active, Button.edit:focus {
     color: rgb(7, 87, 15);
     border-color: rgb(7, 87, 15);
 }
+
+Button.details {
+    background-color: rgb(228, 126, 24);
+    border-color: rgb(228, 126, 24);
+}
+
+Button.details:hover, Button.details:active, Button.details:focus {
+    background-color: rgb(246, 249, 246);
+    color: rgb(228, 126, 24);
+    border-color: rgb(228, 126, 24);
+}

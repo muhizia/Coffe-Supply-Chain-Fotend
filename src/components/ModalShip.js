@@ -11,16 +11,16 @@ import useToken from './useToken';
 import jwt from 'jwt-decode';
 
 const BASE_URL = 'http://localhost:4000';
-const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
-    const [countries, setCountries] = useState(undefined)
-    const [regions, setRegions] = useState(undefined)
+const ModalShip = forwardRef(({ show, handleClose }, ref) => {
+    const [producers, setProducers] = useState(undefined)
+    const [suppliers, setSuppliers] = useState(undefined)
     const [countryValue, setCountryValue] = useState(0)
-    const [regionValue, setRegionValue] = useState(0)
+    const [supplierValue, setSupplierValue] = useState(0)
     const [error, setError] = useState(false)
     const [success, setSuccess] = useState(false)
     const [message, setMessage] = useState("")
     const [edit, setEdit] = useState(false)
-    const [del, setDel] = useState(false)
+    const [statusValue, setStatusValue] = useState(false)
     const { token } = useToken();
     const formRef = useRef(null);
     // Form fields
@@ -50,7 +50,13 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
         }
         else {
             console.log({ name: event.target[0].value, address: event.target[3].value, region_id: event.target[2].value })
-            create({ name: event.target[0].value, address: event.target[3].value, region_id: event.target[2].value }, prod)
+            
+            create({
+                "origin_id": event.target[0].value,
+                "destination_id": event.target[1].value,
+                "quantity": event.target[2].value,
+                "status": event.target[3].value
+              });
         }
 
     };
@@ -60,41 +66,63 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
         setValidated(false);
     };
 
-    const changeCountry = event => {
-        console.log(typeof event.target.value);
+    const changeProducer = event => {
         setCountryValue(event.target.value);
-        fetchRegions(event.target.value)
+        // fetchSuppliers(event.target.value)
     }
-    const changeRegion = event => {
-        setRegionValue(event.target.value);
+    const changeSupplier = event => {
+        setSupplierValue(event.target.value);
 
     };
-    const fetchRegions = (value) => {
-        fetch(BASE_URL + '/region/country/' + value)
-            .then((res) => res.json())
+    const changeStatus = event => {
+        setStatusValue(event.target.value);
+    }
+    const fetchProducers = () => {
+        fetch(BASE_URL + '/producer', {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+        }).then((res) => res.json())
             .then((data) => {
                 console.log(data);
-                setRegions(data.region);
+                setProducers(data.producers);
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    }
+    const fetchSuppliers = () => {
+        fetch(BASE_URL + '/supplier', {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${token}`, 
+            }
+        }).then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+                setSuppliers(data.suppliers);
             })
             .catch((err) => {
                 console.log(err.message);
             });
     }
     const getCompbyID = (id) => {
-        const path = prod ? '/producer/' : '/supplier/';
+        const path = '/shipment/';
         fetch(BASE_URL + path + id, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
                 'Authorization': `Bearer ${token}`, 
             }
-        })
-            .then((res) => res.json())
+        }).then((res) => res.json())
             .then((data) => {
                 if (data.success) {
                     // TODO: set form
-                    prod ? setForm(data.producer): setForm(data.supplier)
-                }else{
+                    setForm(data.shipments)
+                } else {
                     console.log(data)
                 }
             })
@@ -103,24 +131,18 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
             });
     }
     useEffect(() => {
-        fetch(BASE_URL + '/country')
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data);
-                setCountries(data.countries);
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
+        fetchProducers();
+        fetchSuppliers();
     }, []);
 
 
-        const create = (data = {}, prod) => {
-        const path = prod ? '/producer' : '/supplier';
+        const create = (data = {}) => {
+        const path = '/shipment';
         fetch(BASE_URL + path, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(data),
         }).then((res) => res.json())
@@ -141,8 +163,8 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
                 console.log(err.message);
             });
     }
-    const setForm = (producer) => {
-        console.log(producer)
+    const setForm = (shipment) => {
+        console.log(shipment)
     }
 
 
@@ -155,41 +177,29 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
                 <Row className="vh-50 d-flex justify-content-center align-items-center">
                     <Col md={12} lg={12} xs={12}>
                         <div className="mb-3 mt-md-4">
-                            <h2 className="fw-bold mb-2 text-uppercase d-flex justify-content-center align-items-center">{prod ? "Add a producer" : "Add a supplier"}</h2>
+                            <h2 className="fw-bold mb-2 text-uppercase d-flex justify-content-center align-items-center">Add a shipment</h2>
                             <p className="d-flex justify-content-center align-items-center mb-5">Please enter the details</p>
                             {error && <Alert key="danger" variant="danger">
                                 {message}
                             </Alert>}
                             {success && <Alert key="success" variant="success">
-                                A{prod ? " producer" : " supplier"} successfully added.
+                                A Shipment successfully added.
                             </Alert>}
                             <div className="mb-3">
                                 <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
-                                    <Form.Group className="mb-3" controlId="formCompanyName">
-                                        <FloatingLabel
-                                            controlId="floatingFirstname"
-                                            label="Enter company name"
-                                            className="mb-3"
-                                        >
-                                            <Form.Control required type="text" placeholder="Enter " />
-                                            <Form.Control.Feedback type="invalid">
-                                                Please provide a {prod ? "Producer " : "Supplier "} name.
-                                            </Form.Control.Feedback>
-                                        </FloatingLabel>
-
-                                    </Form.Group>
+                                    
 
                                     <Form.Group className="mb-3" controlId="formCountry">
                                         <FloatingLabel
                                             controlId="floatingLastname"
-                                            label="Country"
+                                            label="Origin"
                                             className="mb-3"
                                         >
                                             {/* <Form.Control type="text" placeholder="country" /> */}
-                                            <Form.Select onChange={changeCountry} value={countryValue} required>
-                                                <option value="">Select a country</option>
-                                                {countries && countries.map((country) =>
-                                                    <option key={country.id} value={country.id}>{country.names}</option>
+                                            <Form.Select onChange={changeProducer} value={countryValue} required>
+                                                <option value="">Select a producer</option>
+                                                {producers && producers.map((producer) =>
+                                                    <option key={producer.ID} value={producer.ID}>{producer.Name}</option>
                                                 )}
                                             </Form.Select>
                                         </FloatingLabel>
@@ -198,31 +208,43 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
                                     <Form.Group className="mb-3" controlId="formRegion">
                                         <FloatingLabel
                                             controlId="floatingEmail"
-                                            label="Region"
+                                            label="Destination"
                                             className="mb-3"
                                         >
-                                            <Form.Select onChange={changeRegion} value={regionValue} required>
-                                                <option value="">Select a region</option>
-                                                {regions && regions.map((region) =>
-                                                    <option key={region.id} value={region.id}>{region.names}</option>
+                                            <Form.Select onChange={changeSupplier} value={supplierValue} required>
+                                                <option value="">Select a destination</option>
+                                                {suppliers && suppliers.map((supplier) =>
+                                                    <option key={supplier.ID} value={supplier.ID}>{supplier.Name}</option>
                                                 )}
                                             </Form.Select>
                                         </FloatingLabel>
                                     </Form.Group>
-
-                                    <Form.Group
-                                        className="mb-3"
-                                        controlId="formAddress"
-                                    >
+                                    <Form.Group className="mb-3" controlId="formCompanyName">
                                         <FloatingLabel
-                                            controlId="floatingPassword"
-                                            label="Enter Addresses"
+                                            controlId="floatingFirstname"
+                                            label="Quantities (KG)"
                                             className="mb-3"
                                         >
-                                            <Form.Control required type="text" placeholder="Address" />
+                                            <Form.Control required type="number" placeholder="Enter " />
                                             <Form.Control.Feedback type="invalid">
-                                                Please provide an address.
+                                                Please provide a shipment name.
                                             </Form.Control.Feedback>
+                                        </FloatingLabel>
+
+                                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="formRegion">
+                                        <FloatingLabel
+                                            controlId="floatingEmail"
+                                            label="Destination"
+                                            className="mb-3"
+                                        >
+                                            <Form.Select onChange={changeStatus} value={statusValue} required>
+                                                <option value="">Select a status</option>
+                                                <option key="1" value="Pending">Pending</option>
+                                                <option key="2" value="In transit">In transit</option>
+                                                <option key="3" value="Delivered">Delivered</option>
+                                                
+                                            </Form.Select>
                                         </FloatingLabel>
                                     </Form.Group>
 
@@ -233,7 +255,7 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
                                     </Form.Group>
                                     <div className="d-grid">
                                         <Button variant="primary" type="submit">
-                                            {prod ? "Add a producer" : "Add a supplier"}
+                                            Add a shipment
                                         </Button>
                                     </div>
                                 </Form>
@@ -250,4 +272,4 @@ const ModalComp = forwardRef(({ show, handleClose, prod }, ref) => {
     )
 });
 
-export default ModalComp;
+export default ModalShip;

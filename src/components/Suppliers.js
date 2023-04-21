@@ -2,14 +2,20 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Company from "./tables/Company";
+import useToken from './useToken';
 
-
+const BASE_URL = 'http://localhost:4000'
 const Suppliers = () => {
     const [suppliers, setSuppliers] = useState([]);
-
+    const { token } = useToken();
     useEffect(() => {
-        fetch('http://localhost:4000/supplier')
-            .then((res) => res.json())
+        fetch(BASE_URL + '/supplier', {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${token}`, 
+            }
+        }).then((res) => res.json())
             .then((data) => {
                 console.log(data);
                 setSuppliers(data);
@@ -32,12 +38,12 @@ const Suppliers = () => {
     return (
         <>
             <div>
-      {!suppliers.success ? <Alert key={'danger'} variant={'danger'}>
-                                {suppliers.message}
-                            </Alert> :
-        <Company companies={suppliers.suppliers} onUpdateSupplier={onUpdateSupplier}
-      />}
-    </div>
+                {!suppliers.success ? <Alert key={'danger'} variant={'danger'}>
+                    {suppliers.message}
+                </Alert> :
+                    <Company companies={suppliers.suppliers} onUpdateSupplier={onUpdateSupplier}
+                    />}
+            </div>
         </>
     );
 };
