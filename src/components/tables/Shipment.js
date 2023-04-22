@@ -6,6 +6,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import ModalShip from '../ModalShip';
 import * as FaIcons from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 import '../../css/Table.css'
 
 function Shipment({ shipments }) {
@@ -13,20 +14,22 @@ function Shipment({ shipments }) {
     const ref = useRef();
     const handleShow = () => setShow(true)
     const handleClose = () => setShow(false)
+    const navigate = useNavigate();
+
     const handleEdit = (id) => {
-        setShow(true);
-        ref.current.handleEdit(id)
+        // setShow(true);
+        // ref.current.handleEdit(id)
     }
     const handleDelete = (id) => {
-        setShow(true);
-        ref.current.handleDelete(id)
+        // setShow(true);
+        // ref.current.handleDelete(id)
     }
     const handleDetails = (id) => {
-        
+        navigate(`/details/${id}`)
     }
     return (
         <div className='Table'>
-            <OverlayTrigger overlay={<Tooltip key="right" placement="right" id="tooltip-right">Add a shipment</Tooltip>}>
+            <OverlayTrigger overlay={<Tooltip key="top" placement="top" id="tooltip-top">Add a shipment</Tooltip>}>
                 <span className="d-inline-block">
                     <Button onClick={() => handleShow()}><FaIcons.FaPlus /></Button>
                 </span>
@@ -34,7 +37,6 @@ function Shipment({ shipments }) {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Shipment ID</th>
                         <th>Origin</th>
                         <th>Destination</th>

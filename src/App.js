@@ -8,16 +8,18 @@ import Forgot from './screens/ForgotPassword';
 import Dashboard from './screens/Dashboard';
 import Producers from './screens/Producers';
 import Suppliers from './screens/Suppliers';
-import useToken from './components/useToken';
 import Shipments from './screens/Shipments';
-import Details from './screens/Details'
+import Details from './screens/Details';
+import Auth from './screens/Auth';
+
+import useToken from './components/useToken';
 
 export default function App() {
   
   const { token, setToken } = useToken();
 
   if(!token) {
-    return <Login setToken={setToken} />
+    return <Auth setToken={setToken} />
   }
 
   return (
@@ -25,14 +27,14 @@ export default function App() {
       {/* <Navbar /> */}
       <Routes>
         {/* <Route path="login" element={<Login />} /> */}
-        <Route path="register" element={<Register />} />
-        <Route path="forgot" element={<Forgot />} />
+        {/* <Route path="register" element={<Register />} />
+        <Route path="forgot" element={<Forgot />} /> */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="producers" element={<Producers />} />
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="shipments" element={<Shipments />} />
-          <Details path="details" element={<Details />} />
+          <Route path="details/:shipment_id" element={<Details />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

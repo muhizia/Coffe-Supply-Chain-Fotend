@@ -10,7 +10,7 @@ const Layout = () => {
       <Nav />
       <div className='sidebar' style={{ display: 'flex', height: '100%' }}>
         <RightNav />
-        <main>
+        <main >
           <Outlet />
         </main>
       </div>
